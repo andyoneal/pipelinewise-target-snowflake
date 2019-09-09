@@ -21,6 +21,9 @@ from jsonschema import ValidationError, Draft4Validator, FormatChecker
 import singer
 from target_snowflake.db_sync import DbSync
 
+import decimal
+decimal.getcontext().prec = 40
+
 logger = singer.get_logger()
 
 def float_to_decimal(value):

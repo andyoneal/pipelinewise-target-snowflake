@@ -9,11 +9,14 @@ import re
 import itertools
 import time
 import datetime
+import logging
 
 from snowflake.connector.encryption_util import SnowflakeEncryptionUtil
 from snowflake.connector.remote_storage_util import SnowflakeFileEncryptionMaterial
 
 logger = singer.get_logger()
+sf_logger = logger.get_logger('snowflake.connector')
+sf_logger.set_logger(logging.WARNING)
 
 
 def validate_config(config):
@@ -289,7 +292,7 @@ class DbSync:
             #
             # Further info: https://snowflakecommunity.force.com/s/question/0D50Z00008AEhWbSAL/python-snowflake-connector-ocsp-response-warning-message
             # Snowflake is changing certificate authority
-            insecure_mode=True
+            insecure_mode=False
         )
 
     def query(self, query, params=None):
@@ -547,7 +550,7 @@ class DbSync:
 
         # information_schema_columns is an optional pre-collected list of available objects in snowflake
         if self.information_schema_columns:
-            schema_rows = list(filter(lambda x: x['TABLE_SCHEMA'] == schema_name, self.information_schema_columns))
+            schema_rows = list(filter(lambda x: x['TABLE_SCHEMA'] == schema_name.lower(), self.information_schema_columns))
         # Query realtime if not pre-collected
         else:
             schema_rows = self.query(
