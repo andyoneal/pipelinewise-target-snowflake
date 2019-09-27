@@ -15,8 +15,8 @@ from snowflake.connector.encryption_util import SnowflakeEncryptionUtil
 from snowflake.connector.remote_storage_util import SnowflakeFileEncryptionMaterial
 
 logger = singer.get_logger()
-sf_logger = logger.get_logger('snowflake.connector')
-sf_logger.set_logger(logging.WARNING)
+#sf_logger = logger.get_logger('snowflake.connector')
+#sf_logger.set_logger(logging.WARNING)
 
 
 def validate_config(config):
