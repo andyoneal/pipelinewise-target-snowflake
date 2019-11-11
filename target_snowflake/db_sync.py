@@ -1,5 +1,7 @@
 import os
 import json
+import sys
+
 import boto3
 import snowflake.connector
 import singer
@@ -97,7 +99,7 @@ def column_clause(name, schema_property):
 
 def flatten_key(k, parent_key, sep):
     full_key = parent_key + [k]
-    inflected_key = [n for n in full_key]
+    inflected_key = full_key.copy()
     reducer_index = 0
     while len(sep.join(inflected_key)) >= 255 and reducer_index < len(inflected_key):
         reduced_key = re.sub(r'[a-z]', '', inflection.camelize(inflected_key[reducer_index]))
@@ -208,7 +210,7 @@ class DbSync:
         # Exit if config has errors
         if len(config_errors) > 0:
             logger.error("Invalid configuration:\n   * {}".format('\n   * '.join(config_errors)))
-            exit(1)
+            sys.exit(1)
 
         # Internal pipelinewise schema derived from the stage object in the config
         stage = stream_name_to_dict(self.connection_config['stage'], separator='.')
@@ -216,7 +218,7 @@ class DbSync:
             self.pipelinewise_schema = stage['schema_name']
         else:
             logger.error("The named external stage object in config has to use the <schema>.<stage_name> format.")
-            exit(1)
+            sys.exit(1)
 
         self.schema_name = None
         self.grantees = None
@@ -288,11 +290,7 @@ class DbSync:
             account=self.connection_config['account'],
             database=self.connection_config['dbname'],
             warehouse=self.connection_config['warehouse'],
-            # Use insecure mode to avoid "Failed to get OCSP response" warnings
-            #
-            # Further info: https://snowflakecommunity.force.com/s/question/0D50Z00008AEhWbSAL/python-snowflake-connector-ocsp-response-warning-message
-            # Snowflake is changing certificate authority
-            insecure_mode=False
+            autocommit=True
         )
 
     def query(self, query, params=None):
