@@ -90,7 +90,7 @@ def column_trans(schema_property):
 
 
 def safe_column_name(name):
-    return '{}'.format(name.replace('.','').replace(':','_').replace('_sdc_','_orig_sdc_'))
+    return '{}'.format(name.replace('.','').replace(':','_'))
 
 
 def column_clause(name, schema_property):
@@ -613,7 +613,7 @@ class DbSync:
                 properties_schema
             )
             for (name, properties_schema) in self.flatten_schema.items()
-            if name.replace('.','').replace(':','_').replace('_sdc_','_orig_sdc_').lower() not in columns_dict
+            if name.replace('.','').replace(':','_').lower() not in columns_dict
         ]
 
         for column in columns_to_add:
@@ -625,8 +625,8 @@ class DbSync:
                 properties_schema
             ))
             for (name, properties_schema) in self.flatten_schema.items()
-            if name.replace('.','').replace(':','_').replace('_sdc_','_orig_sdc_').lower() in columns_dict and
-               columns_dict[name.replace('.','').replace(':','_').replace('_sdc_','_orig_sdc_').lower()]['DATA_TYPE'].lower() != column_type(properties_schema).lower() and
+            if name.replace('.','').replace(':','_').lower() in columns_dict and
+               columns_dict[name.replace('.','').replace(':','_').lower()]['DATA_TYPE'].lower() != column_type(properties_schema).lower() and
 
                # Don't alter table if TIMESTAMP_NTZ detected as the new required column type
                #
