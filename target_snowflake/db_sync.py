@@ -90,7 +90,7 @@ def column_trans(schema_property):
 
 
 def safe_column_name(name):
-    return '"{}"'.format(name.replace('.','').replace(':','_').replace('_sdc_','_orig_sdc_'))
+    return '{}'.format(name.replace('.','').replace(':','_').replace('_sdc_','_orig_sdc_'))
 
 
 def column_clause(name, schema_property):
