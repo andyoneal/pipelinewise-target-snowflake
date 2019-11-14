@@ -605,7 +605,7 @@ class DbSync:
             columns = list(filter(lambda x: x['TABLE_SCHEMA'] == self.schema_name.lower() and x['TABLE_NAME'].lower() == table_name, self.information_schema_columns))
         else:
             columns = self.get_table_columns(table_schemas=[self.schema_name], table_name=table_name)
-        columns_dict = {column['COLUMN_NAME'].lower(): column for column in columns}
+        columns_dict = {column['COLUMN_NAME'].replace('.','').replace(':','_').replace('_sdc_','_orig_sdc_').lower(): column for column in columns}
 
         columns_to_add = [
             column_clause(
