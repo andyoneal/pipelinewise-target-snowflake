@@ -605,7 +605,7 @@ class DbSync:
             columns = list(filter(lambda x: x['TABLE_SCHEMA'] == self.schema_name.lower() and x['TABLE_NAME'].lower() == table_name, self.information_schema_columns))
         else:
             columns = self.get_table_columns(table_schemas=[self.schema_name], table_name=table_name)
-        columns_dict = {column['COLUMN_NAME'].replace('.','').replace(':','_').replace('_sdc_','_orig_sdc_').lower(): column for column in columns}
+        columns_dict = {column['COLUMN_NAME'].lower(): column for column in columns}
 
         columns_to_add = [
             column_clause(
@@ -613,7 +613,7 @@ class DbSync:
                 properties_schema
             )
             for (name, properties_schema) in self.flatten_schema.items()
-            if name.lower() not in columns_dict
+            if name.replace('.','').replace(':','_').replace('_sdc_','_orig_sdc_').lower() not in columns_dict
         ]
 
         for column in columns_to_add:
@@ -625,8 +625,8 @@ class DbSync:
                 properties_schema
             ))
             for (name, properties_schema) in self.flatten_schema.items()
-            if name.lower() in columns_dict and
-               columns_dict[name.lower()]['DATA_TYPE'].lower() != column_type(properties_schema).lower() and
+            if name.replace('.','').replace(':','_').replace('_sdc_','_orig_sdc_').lower() in columns_dict and
+               columns_dict[name.replace('.','').replace(':','_').replace('_sdc_','_orig_sdc_').lower()]['DATA_TYPE'].lower() != column_type(properties_schema).lower() and
 
                # Don't alter table if TIMESTAMP_NTZ detected as the new required column type
                #
